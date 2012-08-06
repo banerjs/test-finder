@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block head %}
+<title>Signup</title>
+{% endblock %}
+
+{% block body %}
+	
+	<br/><br/>
+
+	<div id="signin-form">
+
+  <div id="temp"><h1>Guide Finder Signup temporarily under construction. Please don't use!</h1></div>
+
+
+	<h1 id="signin-header">Sign up for a free account</h1>	
+
+	<div id="open-id">
+
+	<p>Do you already have an account on one of the sites listed below? No need to do the same work twice.</p>
+	<p>Click the logo to create a new account through one of our partner sites.</p>
+
+	<div id="oa-wrap">
+		<a href="{% url 'begin' "facebook" %}">
+    		<img class="openid-pic" id="face-pic" src="{{ MEDIA_URL }}openid/facebook-logo.jpg">
+    		</a>
+   
+    		<a href="{% url 'begin' "google-oauth2" %}">
+    		<img class="openid-pic" id="goog-pic" src="{{ MEDIA_URL }}openid/google-logo.jpg">
+    		</a>
+    
+    		<a href="{% url 'begin' "yahoo" %}">
+    		<img class="openid-pic" id="yahoo-pic" src="{{ MEDIA_URL }}openid/yahoo-logo.jpg">
+    		</a>
+
+    		<form action="{% url 'begin' "openid" %}" method="post">{% csrf_token %}
+       	<div>
+         	<input id="openid_identifier" type="text" value="aol.com" name="openid_identifier"/>
+         	<input type="submit" value="" id="aol-button"/>
+		</div>
+    		</form>
+	</div><!--end wrap-->
+
+	</div><!--end openid-->
+
+	<div id="reg-signin">
+	
+	<h3 id="reg-title">Don't have an account with any of the above?</h3>
+	<p id="np">No problem, simply sign in below:</p>
+
+	<form method="post" action="{% url 'registration_register' %}">
+        {% csrf_token %}
+	<table>
+	{{ form.as_table }}
+	</table>
+	 <!-- <table>
+	    <tr>
+	       <td>{{ form.username.label_tag }}</td>
+	       <td>{{ form.username }}</td>
+	    </tr>
+	    <tr>
+	       <td>{{ form.password.label_tag }}</td>
+	       <td>{{ form.password }}</td>
+	    </tr>
+	 </table>-->
+	 <input type="submit" id= "create" value="Create my account" />
+	 <input type="hidden" name="next" value="{{ next }}" />
+      </form>
+
+
+
+	</div><!--end of regular signin-->	
+
+
+	</div <!--end login form -->
+
+
+	<div id="sign-up">
+
+
+	<p>Already have a Guide Finder account? <a href="{% url 'auth_login' %}"> Click here to log in.</a></p>
+	</div>
+
+
+
+{% endblock %}

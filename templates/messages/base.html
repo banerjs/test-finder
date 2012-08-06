@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% block body %}
+{% block content %}
+{% endblock %}
+<ul class="subnavilist">
+    <li><a href="{% url 'messages_inbox' %} ">&raquo;&nbsp;"Inbox"</a></li>
+    <li><a href="{% url 'messages_outbox' %} ">&raquo;&nbsp;"Sent Messages"</a></li>
+    <li><a href="{% url 'messages_compose' %} ">&raquo;&nbsp;"New Message"</a></li>
+    <li><a href="{% url 'messages_trash' %} ">&raquo;&nbsp;"Trash"</a></li>
+</ul>
+{% endblock %}

@@ -1,0 +1,15 @@
+<h3>Request variables</h3>
+{% for key,value in request.GET.items %}
+{{ key }}:{{ value }} <br/>
+{% endfor %}
+
+<h2>Guides</h2>
+<ul>
+{% for guide in guides_list %}
+<li>This guide name is <a href="{{ guide.get_absolute_url }}">{{ guide.person.full_name }}</a></li>
+{% empty %}
+<li>NO GUIDES FOUND!!</li>
+{% endfor %}
+</ul>
+
+<br/><br/>

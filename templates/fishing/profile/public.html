@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Profile of {{ guide.person.full_name }}</title>
+{% endblock %}
+
+{% block body %}
+<h1>This is where the details of the {{ guide.person.full_name }} go!</h1>
+
+<p>At a later point, links from this page will point to URLs that allow booking this guide</p>
+{% endblock %}

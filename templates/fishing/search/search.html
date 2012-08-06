@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+
+{% block content %}
+<form id="search_form" action="{% url fishing_search %}" method="get">
+
+                <!-- Location -->
+                <div class = "ui-widget">
+                <input id = "loc" type= "text" name="loc"
+                 value = " Where do you want to fish?"
+                 onfocus="clickclear(this, ' Where do you want to fish?')"
+                 onblur="clickrecall(this, ' Where do you want to fish?')" />
+                </div>
+
+                 <!-- Calendar  -->
+                <input id="date" type="text" name="date"
+                 value = " Date"
+                 onfocus="clickclear(this, ' Date')"
+                 onblur="clickrecall(this, ' Date')"/>
+
+                 <!-- Added by Sid: Hidden lat and lng inputs -->
+                 <input id="id_lat" type="hidden" name="lat"/>
+                 <input id="id_lng" type="hidden" name="lng"/>
+
+                <!-- Submit -->
+                <input type="submit" id="button" value="Find a Guide" />
+</form>
+
+{% endblock %}
