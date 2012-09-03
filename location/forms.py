@@ -5,24 +5,12 @@ from myproject.location.models import BaseLocation, WaterBody
 
 # The following forms are for users to modify and add locations to the Database
 
-class LocationForm(forms.ModelForm): # Do NOT under any circumstance use this on it's own
-    class Meta:
-        widgets = { 'lat': forms.HiddenInput,
-                    'lng': forms.HiddenInput }
+class LocationForm(forms.Form):
+    lat = forms.FloatField(widget=forms.HiddenInput)
+    lng = forms.FloatField(widget=forms.HiddenInput)
+    type = forms.CharField(widget=forms.HiddenInput)
+    input = forms.CharField(widget=forms.TextInput(attrs={'size':'40'}))
 
     class Media:
-        js = (settings.JS_URL + 'geocode.js',)
-
-class BaseLocationForm(LocationForm):
-    class Meta(LocationForm.Meta):
-        model = BaseLocation
-
-    class Media(LocationForm.Media):
-        pass
-
-class WaterBodyForm(LocationForm):
-    class Meta(LocationForm.Meta):
-        model = WaterBody
-
-    class Media(LocationForm.Media):
-        pass
+        js = ('https://maps.googleapis.com/maps/api/js?key='+settings.GOOGLE_API_KEY+'&sensor=false&libraries=places',
+              settings.JS_URL + 'geocode.js', )

@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^', include('registration.urls')),
     url(r'^fishing/', include('myproject.fishing.urls')),
     url(r'^customer/', include('myproject.customer.urls')),
-    url(r'^$', RedirectView.as_view(url='/fishing/', permanent=True, query_string=True), name='MAIN_home'),
+    url(r'^$', RedirectView.as_view(url='/fishing/', permanent=False, query_string=True), name='MAIN_home'),
     url(r'^about/$', TemplateView.as_view(template_name="about.html"), name='MAIN_about'),
     url(r'^contact/$', TemplateView.as_view(template_name="contact.html"), name='MAIN_contact'),
 )

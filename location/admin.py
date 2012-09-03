@@ -1,6 +1,5 @@
 from django.contrib import admin
 from myproject.location.models import BaseLocation, Country, WaterBody, GeoRelations
-from myproject.location.forms import BaseLocationForm, WaterBodyForm
 
 def update_water(modeladmin, request, queryset):
     for obj in queryset:
@@ -13,7 +12,7 @@ class BaseLocationAdmin(admin.ModelAdmin):
     list_display = ('city', 'state', 'country')
     list_editable = ('state',)
     ordering = ('country', 'state', 'city')
-    form = BaseLocationForm
+    #form = BaseLocationForm
 
 def update_locations(modeladmin, request, queryset):
     for obj in queryset:
@@ -23,14 +22,14 @@ update_locations.short_description = "Reassociate locations"
 class WaterBodyAdmin(admin.ModelAdmin):
     actions = [update_locations]
     list_display = ('__unicode__', 'state', 'country')
-    form = WaterBodyForm
+    #form = WaterBodyForm
 
 class GeoRelationsAdmin(admin.ModelAdmin):
     list_display = ('location', 'water', 'verified')
     list_editable = ('verified',)
     list_display_links = ('location', 'water')
 
-admin.site.register(WaterBody, WaterBodyAdmin)
+#admin.site.register(WaterBody, WaterBodyAdmin)
 admin.site.register(GeoRelations, GeoRelationsAdmin)
-admin.site.register(BaseLocation, BaseLocationAdmin)
+#admin.site.register(BaseLocation, BaseLocationAdmin)
 admin.site.register(Country)

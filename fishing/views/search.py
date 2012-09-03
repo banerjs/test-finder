@@ -10,70 +10,15 @@ from django.conf import settings
 from myproject.custom import GoogleLatLng
 from myproject.location.models import BaseLocation, WaterBody
 from myproject.fishing.models import FishingCore, Fish, FishingType
+from myproject.fishing.forms import SearchForm
 
 # Create your views here.
 
-# Old code to parse the location string
-# def locDetermine(location):
-#     params = location.split(',')
-#     for a in range(len(params)):
-#         params[a] = params[a].strip()
-#     if len(params) == 1:
-#         test = BaseLocation.objects.filter(city__icontains=params[0])
-#         if not test.exists():
-#             test = BaseLocation.objects.filter(Q(state__key__iexact=params[0]) | Q(state__name__icontains=params[0]))
-#             if not test.exists():
-#                 test = BaseLocation.objects.filter(Q(country__abbr__iexact=params[0]) | Q(country__name__icontains=params[0]))
-#                 if not test.exists():
-#                     test = WaterBody.objects.filter(name__icontains=params[0])
-#                     if not test.exists():
-#                         return (None, None)
-#                     else:
-#                         return test[0], ['natural_feature',]
-#                 else:
-#                     return test[0], ['country',]
-#             else:
-#                 return test[0], ['administrative_area_level_1',]
-#         else:
-#             return test[0], ['city',]
-#     elif len(params) == 2:
-#         test = BaseLocation.objects.filter(Q(city__icontains=params[0]),
-#                                            Q(state__key__iexact=params[1]) | Q(state__name__icontains=params[1]))
-#         if not test.exists():
-#             test = BaseLocation.objects.filter(Q(state__key__iexact=params[0]) | Q(state__name__icontains=params[0]),
-#                                                Q(country__abbr__iexact=params[1]) | Q(country__name__icontains=params[1]))
-#             if not test.exists():
-#                 test = WaterBody.objects.filter(Q(name__icontains=params[0]),
-#                                                 Q(state__key__iexact=params[1]) | Q(state__name__icontains=params[1]) |
-#                                                 Q(country__abbr__iexact=params[1]) | Q(country__name__icontains=params[1]))
-#                 if not test.exists():
-#                     return None, None
-#                 else:
-#                     return test[0], ['natural_feature',]
-#             else:
-#                 return test[0], ['administrative_area_level_1',]
-#         else:
-#             return test[0], ['city',]
-#     else:
-#         test = BaseLocation.objects.filter(Q(city__icontains=params[0]),
-#                                            Q(state__key__iexact=params[1]) | Q(state__name__icontains=params[1]),
-#                                            Q(country__abbr__iexact=params[2]) | Q(country__name__icontains=params[2]))
-#         if not test.exists():
-#             test = WaterBody.objects.filter(Q(name__icontains=params[0]),
-#                                             Q(state__key__iexact=params[1]) | Q(state__name__icontains=params[1]),
-#                                             Q(country__abbr__iexact=params[2]) | Q(country__name__icontains=params[2]))
-#             if not test.exists():
-#                 return None, None
-#             else:
-#                 return test[0], ['natural_feature',]
-#         else:
-#             return test[0], ['city',]
+def searchHome(request, template_name='fishing/search/search.html', **kwargs):
+    form = SearchForm(auto_id='geocode_%s')
+    return render(request, template_name, { 'form':form })
 
 def locQuery(location, **kwargs):
-    """
-    The commented region is the old code. The new code functions based on the JS
-    parameters returned.
-    """
     query = FishingCore.objects.none()
     lat = kwargs.get('lat')
     lng = kwargs.get('lng')
@@ -96,58 +41,9 @@ def locQuery(location, **kwargs):
         query = query | FishingCore.objects.filter(locations=l)
     for w in water:
         query = query | FishingCore.objects.filter(waterbodies=w)
-    if not settings.USE_TEST_GUIDES: # Do not use test guides
+    if not settings.USE_TEST_GUIDES: # If "do not use test guides"
         query = query.exclude(person__user__is_active=False)
     return query
-#     """
-#     Function to return matching locations. Can be optimized in 2 manners:
-#     1) Get rid of for loops on WaterBody and BaseLocation querysets
-#     2) Optimize locDetermine()
-#     """
-#     q = GoogleLatLng()
-#     query = GuideCore.objects.none()
-#     loc, type = locDetermine(location)
-#     if not type:
-#         if q.requestLatLngJSON(location):
-#             loc, type = q, q.results['types']
-#             newloc = BaseLocation()
-#             try:
-#                 newloc.save(mquery=q)
-#             except:
-#                 pass
-#         elif q.requestLatLngJSON(location, True):
-#             loc, type = q, q.results['types']
-#             newloc = WaterBody()
-#             try:
-#                 newloc.save(mquery=q)
-#             except:
-#                 pass
-#             if newloc.id: newloc.associate_locations()
-#         else:
-#             return query
-#     rad = kwargs.get('radius', 100)
-#     if 'country' in type:
-#         # If it was a search by Country name
-#         try:
-#             l = loc.results['address_components'][0]['short_name']
-#         except:
-#             l = loc.country.abbr
-#         query = GuideCore.objects.filter(Q(locations__country__abbr=l))
-#     elif 'administrative_area_level_1' in type:
-#         # If it was a search by a state name
-#         try:
-#             l = loc.results['address_components'][0]['short_name']
-#         except:
-#             l = loc.state.key
-#         query = GuideCore.objects.filter(Q(locations__state__key=l))
-#     else:
-#         # If is was a search by a city name or a WaterBody
-#         locs = BaseLocation.neighbours.nearby_locations(loc.lat, loc.lng, rad, True).select_related('FishingGuides')
-#         for l in locs:
-#             query = query | GuideCore.objects.filter(locations=l)
-#         locs = WaterBody.neighbours.nearby_locations(loc.lat, loc.lng, rad, True).select_related('Operators')
-#         for w in locs:
-#            query = query | GuideCore.objects.filter(waterbodies=w)
 
 def datQuery(query, date):
     """
@@ -376,58 +272,3 @@ def XMLmethod(request):
     else:
         message = ""
     return HttpResponse(message)
-
-#return boats
-#def XMLboats(request):
-#    message = ""
-#    if request.method == 'GET':
-#        name = request.GET.get('boatname', ' ')
-#        q = Boats.objects.filter(Q(boat_model_name__istartswith=name) |
-#                                 Q(boat_brand_name__istartswith=name)).distinct()
-#        for a in q:
-#            message += a.boat_brand_name + ', ' + a.boat_model_name + ';'
-#    return HttpResponse(message)
-
-# This is for future reference of JSON, if required
-#def JSONsearch(request):
-#    location = fish = ''
-#    if request.method == 'GET':
-#        try:
-#            location = request.GET.__getitem__('loc')
-#        except:
-#            location = ''
-#        else:
-#            if location == " Enter a location":
-#                location = ''
-#        try:
-#            fish = request.GET.__getitem__('fish')
-#        except:
-#            fish = ''
-#        else:
-#            if fish == " Enter a fish name":
-#                fish = ''
-#    if location == '' and fish == '':
-#        return HttpResponseRedirect(domain)
-#    diction = dict(request.GET.items())
-#    guides = parQuery(location, fish, **diction)
-#    answer = serializers.serialize('json', guides, relations={'guide':
-#                                                              {'relations':{'customer':
-#                                                                            {'relations':{'contact':
-#                                                                                          {'fields':('city','state','country')
-#                                                                                          }
-#                                                                                         },
-#                                                                             'extras':('__unicode__',)
-#                                                                             },
-#                                                                            'company':
-#                                                                            {'fields':('company_name',)
-#                                                                             }
-#                                                                            }
-#                                                               },
-#                                                              'fish':
-#                                                              {'fields':('name',)
-#                                                               },
-#                                                              'location':
-#                                                              {'fields':('city','state','country')
-#                                                               }
-#                                                              })
-#    return HttpResponse(answer)

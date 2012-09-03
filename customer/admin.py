@@ -1,6 +1,6 @@
 from django.contrib import admin
 from myproject.customer.models import CustomerCore, ContactInfo, CustomerProfile, PictureGallery, Photograph
-from myproject.customer.forms import ContactInfoForm
+#from myproject.customer.forms import ContactInfoForm
 
 class CustomerCoreAdmin(admin.ModelAdmin):
     list_display = ('id', '__unicode__')
@@ -9,7 +9,7 @@ class CustomerCoreAdmin(admin.ModelAdmin):
 
 class ContactInfoAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'city', 'state', 'country')
-    form = ContactInfoForm
+#    form = ContactInfoForm
 
 admin.site.register(CustomerCore, CustomerCoreAdmin)
 admin.site.register(ContactInfo, ContactInfoAdmin)

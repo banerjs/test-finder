@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 from django.views.generic import TemplateView
 
 urlpatterns = patterns('myproject.fishing.views',
-                       url(r'^$', TemplateView.as_view(template_name='fishing/search/search.html'),
+                       url(r'^$', 'searchHome', { 'template_name':'fishing/search/search.html' },
                            name='fishing_home'),
                        url(r'^search/$', 'searchDisplay', { 'disp': True }, name='fishing_search'),
                        url(r'^xmlhttp/search/$', 'searchDisplay',
