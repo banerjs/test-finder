@@ -8,7 +8,7 @@ from myproject.location.forms import LocationForm
 
 class SearchForm(LocationForm):
     input = forms.CharField(widget=NamedWidget('loc', forms.TextInput(attrs={'size':'40'})))
-    date = forms.DateField()
+    date = forms.DateField(required=False)
 
     class Media(LocationForm.Media):
         pass
