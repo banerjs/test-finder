@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q, F, Max, Min
 from django.contrib.localflavor.us import us_states
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, QueryDict
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, redirect
 from django.conf import settings
 
 from myproject.custom import GoogleLatLng
@@ -173,47 +173,43 @@ def parQuery(location, day, **kwargs):
     query = ordQuery(retQuery(location, day, **kwargs), kwargs.get('ordering'))
     return query
 
-def searchDisplay(request, template_name='fishing/search/display.html', debug=False, disp=False, **kwargs):
+def searchDisplay(request, template_name='fishing/search/display.html', debug=False, disposable=False, **kwargs):
     # debug is for testSearch when debugging search from the shell
     # disp is for use by the disposable site only. Delete it in the production code
     request.GET = request.GET.copy()                  # Make the Dict mutable so that functions can act on it
 
     # This should be deleted:
-    if disp:
+    if disposable:
         s = request.GET.get('other')
         if s:
             q = QueryDict(s)
             request.GET.update(q)
     # End part that should be deleted
 
-    location = request.GET.get('loc', '')
-    day = request.GET.get('date', '')
-    # Clean location data
-    if '?' in location:
-        location = ''
-    if location == '':
+    form = SearchForm(request.GET, auto_id='geocode_%s')
+
+    if form.is_valid():
+        location = form.cleaned_data.get('loc')
+        day = form.cleaned_data.get('date')
+        
+        if location == '':
+            if debug:
+                return ('NULL Location', [])
+            if template_name == 'fishing/search/display.html':
+                red = request.META.get('HTTP_REFERER', settings.DOMAIN)
+                return redirect(request, red)
+            else:
+                return render(request, template_name, { 'guides_list':[] })
+        # Get the remaining dictionary
+        diction = dict(request.GET.items())
+        # Process the search terms
+        guides = parQuery(location, day, **diction)
         if debug:
-            return ('NULL Location', [])
-        if template_name == 'fishing/search/display.html':
-            red = request.META.get('HTTP_REFERER', settings.DOMAIN)
-            return HttpResponseRedirect(red)
-        else:
-            return render(request, template_name, { 'guides_list':[] })
-    # Clean date data
-    try:
-        day = datetime.strptime(pday, '%m/%d/%Y')
-    except:
-        day = datetime.today()+timedelta(1)
-    # Get the remaining dictionary
-    diction = dict(request.GET.items())
-    # Process the search terms
-    guides = parQuery(location, day, **diction)
-    # Prepare results to return
-    day = day.strftime('%m/%d/%Y')
-    request.GET.__setitem__('date', day)           # Find something better for this later
-    if debug:
-        return ('Guides: ', guides)
-    return render(request, template_name, { 'guides_list': list(guides)[:50] })
+            return ('Guides: ', guides)
+        return render(request, template_name, { 'form': form, 'guides_list': list(guides)[:50] })
+    else:
+        red = request.META.get('HTTP_REFERER', settings.DOMAIN)
+        return redirect(request, red)
 
 def testSearch(**kwargs):
     req = HttpRequest()

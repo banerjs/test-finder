@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 urlpatterns = patterns('myproject.fishing.views',
                        url(r'^$', 'searchHome', { 'template_name':'fishing/search/search.html' },
                            name='fishing_home'),
-                       url(r'^search/$', 'searchDisplay', { 'disp': True }, name='fishing_search'),
+                       url(r'^search/$', 'searchDisplay', { 'disposable': True }, name='fishing_search'),
                        url(r'^xmlhttp/search/$', 'searchDisplay',
                            { 'template_name':'fishing/search/results.html' },
                            name='fishing_search_XML'),
