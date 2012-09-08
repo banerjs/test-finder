@@ -27,6 +27,12 @@ JSLookup = {
                  'autocomplete': 1,
                  'field_id': 'geocode',
                },
+               'location_baselocation':
+               {
+                 'field_id': 'id',
+                 'disable_submit': 1,
+                 'submit_buttons': ['admin_save', 'admin_saveasnew', 'admin_addanother', 'admin_continue'],
+                 'input_name': ['city', 'state', 'country'],
              },
            }
 
