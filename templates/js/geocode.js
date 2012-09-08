@@ -26,14 +26,14 @@ var EventUtil = {
 // is desired. Remember to Django-ize that code
 
 function geocode_initialize() {
-	var input = document.getElementById('geocode_{{ input_name }}');
-
 {% if autocomplete %}
+	var input = document.getElementById('{{ field_id }}_{{ input_name }}');
 	var autocomplete = new google.maps.places.Autocomplete(input);
+
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
-		var latElement = document.getElementById('geocode_lat');
-		var lngElement = document.getElementById('geocode_lng');
-		var typeElement = document.getElementById('geocode_type');
+		var latElement = document.getElementById('{{ field_id }}_lat');
+		var lngElement = document.getElementById('{{ field_id }}_lng');
+		var typeElement = document.getElementById('{{ field_id }}_type');
 
 		var place = autocomplete.getPlace();
 		var lat = place.geometry.location.lat();
@@ -44,12 +44,20 @@ function geocode_initialize() {
 		lngElement.value = lng;
 		typeElement.value = type;
 	});
+{% else %}
+	var input = document.getElementById('{{ field_id }}_{{ input_name }}');
 {% endif %}
 
 	EventUtil.addHandler(input, "keydown", function(event) {
 		var geocoder = new google.maps.Geocoder();
 		var place = input.value;
-
+{% if disable_submit %}
+		var button = new Array();
+{% for button in submit_buttons %}
+		button[{{ forloop.counter0 }}] = document.getElementById('{{ button }}');
+		button[{{ forloop.counter0 }}].disabled = true;
+{% endfor %}
+{% endif %}
 		geocoder.geocode( { 'address': place }, function(results, status) {
 			var lat = 1000;
 			var lng = 1000;
@@ -61,13 +69,19 @@ function geocode_initialize() {
 				type = results[0].types;
 			}
 
-			var latElement = document.getElementById('geocode_lat');
-			var lngElement = document.getElementById('geocode_lng');
-			var typeElement = document.getElementById('geocode_type');
+			var latElement = document.getElementById('{{ field_id }}_lat');
+			var lngElement = document.getElementById('{{ field_id }}_lng');
+			var typeElement = document.getElementById('{{ field_id }}_type');
 
 			latElement.value = lat;
 			lngElement.value = lng;
 			typeElement.value = type;
+
+{% if disable_submit %}
+{% for button in submit_buttons %}
+			button[{{ forloop.counter0 }}].disabled = false;
+{% endfor %}
+{% endif %}
 		});
 	});
 

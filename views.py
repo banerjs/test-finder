@@ -25,6 +25,7 @@ JSLookup = {
                {
                  'input_name': 'loc',
                  'autocomplete': 1,
+                 'field_id': 'geocode',
                },
              },
            }
