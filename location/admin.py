@@ -1,5 +1,6 @@
 from django.contrib import admin
 from myproject.location.models import BaseLocation, Country, WaterBody, GeoRelations
+from myproject.location.forms import BaseLocationFormAdmin
 
 def update_water(modeladmin, request, queryset):
     for obj in queryset:
@@ -9,10 +10,9 @@ update_water.short_description = "Update Water Bodies"
 
 class BaseLocationAdmin(admin.ModelAdmin):
     actions = [update_water]
-    list_display = ('city', 'state', 'country')
-    list_editable = ('state',)
+    list_display = ('city', 'state', 'country', 'lat', 'lng')
     ordering = ('country', 'state', 'city')
-    #form = BaseLocationForm
+    form = BaseLocationFormAdmin
 
 def update_locations(modeladmin, request, queryset):
     for obj in queryset:
@@ -31,5 +31,5 @@ class GeoRelationsAdmin(admin.ModelAdmin):
 
 #admin.site.register(WaterBody, WaterBodyAdmin)
 admin.site.register(GeoRelations, GeoRelationsAdmin)
-#admin.site.register(BaseLocation, BaseLocationAdmin)
+admin.site.register(BaseLocation, BaseLocationAdmin)
 admin.site.register(Country)

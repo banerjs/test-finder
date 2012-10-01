@@ -39,6 +39,7 @@ class Country(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name_plural = 'Countries'
         unique_together = ('abbr', 'name')
 
 class LocationManager(models.Manager):
@@ -66,7 +67,7 @@ class BaseLocation(models.Model):
     neighbours = LocationManager()
 
     def __unicode__(self):
-        return u'%s, %s, %s' % (self.city, self.state.name, self.country.name)
+        return u'%s, %s, %s' % (self.city, self.state, self.country.name)
 
     class Meta:
         verbose_name = "Location of Operation"

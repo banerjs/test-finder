@@ -14,7 +14,7 @@ class SearchForm(GeocodeForm):
 
     class Media(GeocodeForm.Media):
         js = (settings.DYNAMIC_JS_URL + 'fishing_search/geocode.js', )
-
+ 
     def clean(self):
         cleaned_data = self.cleaned_data
         location = cleaned_data.get('loc')

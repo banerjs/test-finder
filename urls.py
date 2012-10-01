@@ -27,7 +27,8 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('myproject.views',
-                        url('^thanks/$', 'contactResponse', name='MAIN_thanks'),
+                        url(r'^thanks/$', 'contactResponse', name='MAIN_thanks'),
                         url(r'^dynamic/js/(?P<module>[A-Za-z0-9_]*)/(?P<file_name>[A-Za-z0-9_-]*\.js)$',
                             'serveDynamicJS', name='MAIN_Dynamic_JS'),
+                        url(r'^test/$', 'testForms'),
 )

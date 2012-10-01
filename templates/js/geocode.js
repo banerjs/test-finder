@@ -106,7 +106,7 @@ function geocode_initialize() {
 
 {% for input in input_name %}
 	EventUtil.addHandler(inputs[{{ forloop.counter0 }}], "keyup", function(event) {
-		combined.value = {% for i in input_name %}inputs[{{ forloop.counter0 }}]{% if not forloop.last %}+', '+{% else %};{% endif %}{% endfor %}
+		combined.value = {% for i in input_name %}inputs[{{ forloop.counter0 }}].value{% if not forloop.last %}+', '+{% else %};{% endif %}{% endfor %}
 		perform_geocode(combined);
 	});
 {% endfor %}

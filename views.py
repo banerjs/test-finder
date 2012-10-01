@@ -5,6 +5,8 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.conf import settings
 
+from myproject.location.forms import BaseLocationForm
+
 # Global Context Processor
 
 def settings_processor(request):
@@ -33,6 +35,7 @@ JSLookup = {
                  'disable_submit': 1,
                  'submit_buttons': ['admin_save', 'admin_saveasnew', 'admin_addanother', 'admin_continue'],
                  'input_name': ['city', 'state', 'country'],
+               },
              },
            }
 
@@ -56,3 +59,12 @@ def serveDynamicJS(request, module, file_name, **kwargs):
         return render(request, template_name, JSLookup[file_name][module], content_type="application/javascript")
     except:
         raise Http404
+
+def testForms(request):
+    if request.method == 'GET':
+        form = BaseLocationForm(request.GET)
+        if form.is_valid():
+            form.save()
+    else:
+        form = BaseLocationForm()
+    return render(request, 'form_test.html', {'form':form})
